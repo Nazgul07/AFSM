@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Another Fucking Start Menu" Width="350" Height="600" Left="0" Name="Menu" DataContext="{Binding ElementName=Menu}"
 		AllowsTransparency="True" WindowStyle="None" Visibility="Hidden" 
-		ShowInTaskbar="False" Activated="Window_Activated" Deactivated="Menu_Deactivated" FontFamily="Segoe UI">
+		ShowInTaskbar="False" Activated="Window_Activated" Deactivated="Menu_Deactivated" FontFamily="Segoe UI" Topmost="True">
 	<Window.Background>
 		<SolidColorBrush Color="black" Opacity=".5"/>
 	</Window.Background>
