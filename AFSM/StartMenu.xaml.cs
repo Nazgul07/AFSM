@@ -57,20 +57,16 @@ namespace AFSM
 			ComputerImageButton.Tag = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
 
 			HibernateMenuItem.Visibility = File.Exists($"{Environment.GetEnvironmentVariable("SystemDrive")}\\hiberfil.sys") ? Visibility.Visible : Visibility.Hidden;
-
-
+			
 			ProgramsList.ItemsSource = Programs;
-
-
+			
 			CollectionView startListView = (CollectionView)CollectionViewSource.GetDefaultView(ProgramsList.ItemsSource);
 			PropertyGroupDescription startGroupDesc = new PropertyGroupDescription("Alph");
 			startListView.GroupDescriptions.Add(startGroupDesc);
-
-
-
+			
 			var desktopWorkingArea = SystemParameters.WorkArea;
 			Left = 0;
-			Top = desktopWorkingArea.Bottom - this.Height;
+			Top = desktopWorkingArea.Bottom - Height;
 			_listener = new StartMenuListener();
 			_listener.StartTriggered += OnStartTriggered;
 
@@ -80,14 +76,15 @@ namespace AFSM
 			PropertyGroupDescription resultGroupDesc = new PropertyGroupDescription("ResultType");
 			resultView.GroupDescriptions.Add(resultGroupDesc);
 		}
-
+		
 		void OnStartTriggered(object sender, EventArgs e)
 		{
 			Visibility = Visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
 			if (Visibility == Visibility.Visible)
 			{
+				Show();
+				WindowActivator.ActivateWindow(new System.Windows.Interop.WindowInteropHelper(Menu).Handle);
 				SearchText.Focus();
-				Activate();
 			}
 		}
 		
@@ -97,6 +94,15 @@ namespace AFSM
 			this.Left = screen.WorkingArea.Left;
 			BlurEffect.EnableBlur(this);
 		}
+
+		private void Menu_Deactivated(object sender, EventArgs e)
+		{
+			Results.Clear();
+			SearchText.Text = string.Empty;
+			Visibility = Visibility.Hidden;
+			Hide();
+		}
+		
 
 		private void GetPrograms(string directory)
 		{
@@ -164,14 +170,7 @@ namespace AFSM
 				}
 			}
 		}
-
-		private void Menu_Deactivated(object sender, EventArgs e)
-		{
-			Results.Clear();
-			SearchText.Text = string.Empty;
-			Visibility = Visibility.Hidden;
-		}
-
+		
 		private void Link_Click(object sender, RoutedEventArgs e)
 		{
 			Link_Click(sender, null);
@@ -284,6 +283,7 @@ namespace AFSM
 		{
 			string verb = (UACButton.IsChecked.HasValue && UACButton.IsChecked.Value ? "runas" : "");
 			Task.Factory.StartNew(() => { 
+
 				ProcessStartInfo processStartInfo;
 
 				processStartInfo = new ProcessStartInfo(command.Split(' ')[0]);
@@ -292,7 +292,14 @@ namespace AFSM
 				processStartInfo.UseShellExecute = true;
 				processStartInfo.Verb = verb;
 
-				Process.Start(processStartInfo);
+				try
+				{
+					Process.Start(processStartInfo);
+				}
+				catch(Exception ex)
+				{
+					Dispatcher.Invoke(() => { System.Windows.MessageBox.Show(ex.Message); });
+				}
 			});
 		}
 

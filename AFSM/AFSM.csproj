@@ -64,6 +64,7 @@
     <Compile Include="ValueConverters.cs" />
     <Compile Include="StartMenuListener.cs" />
     <Compile Include="StartMenuEntry.cs" />
+    <Compile Include="WindowActivator.cs" />
     <Page Include="ScrollbarStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
