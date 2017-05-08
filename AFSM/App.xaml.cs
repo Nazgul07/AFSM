@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Threading;
 
 namespace AFSM
 {
@@ -13,5 +8,17 @@ namespace AFSM
     /// </summary>
     public partial class App : System.Windows.Application
     {
+		static Mutex mutex = new Mutex(true, "{8f7112b5-18a2-4152-896c-97e0fb647681}");
+		public App()
+		{
+			if (mutex.WaitOne(TimeSpan.Zero, true))
+			{
+				mutex.ReleaseMutex();
+			}
+			else
+			{
+				Current.Shutdown();
+			}
+		}
     }
 }
